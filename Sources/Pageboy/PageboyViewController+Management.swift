@@ -38,7 +38,7 @@ public extension PageboyViewController {
                 return
         }
         
-        updateViewControllers(to: [viewController], animated: false, async: false, force: false) { [weak self, defaultIndex, viewController] _ in
+        updateViewControllers(to: [viewController], animated: false, force: false) { [weak self, defaultIndex, viewController] _ in
 
             guard let hasSelf = self else {
                 /// Self DNE
@@ -63,7 +63,6 @@ public extension PageboyViewController {
 
         updateViewControllers(to: [currentViewController],
                               animated: false,
-                              async: false,
                               force: false,
                               completion: nil)
     }
@@ -77,7 +76,6 @@ internal extension PageboyViewController {
                                to toIndex: PageIndex = 0,
                                direction: NavigationDirection = .forward,
                                animated: Bool,
-                               async: Bool,
                                force: Bool,
                                completion: TransitionOperation.Completion?) {
 
@@ -87,8 +85,7 @@ internal extension PageboyViewController {
                                    to: toIndex,
                                    direction: direction,
                                    animated: animated,
-                                   async: async, force:
-                                   force,
+                                   force: force,
                                    completion: completion)
         } else {
             DispatchQueue.main.sync {
@@ -97,7 +94,6 @@ internal extension PageboyViewController {
                                        to: toIndex,
                                        direction: direction,
                                        animated: animated,
-                                       async: async,
                                        force: force,
                                        completion: completion)
             }
@@ -109,7 +105,6 @@ internal extension PageboyViewController {
                                         to toIndex: PageIndex = 0,
                                         direction: NavigationDirection = .forward,
                                         animated: Bool,
-                                        async: Bool,
                                         force: Bool,
                                         completion: TransitionOperation.Completion?) {
 
@@ -138,7 +133,7 @@ internal extension PageboyViewController {
         // if not using a custom transition then animate using UIPageViewController mechanism
         let animateUpdate = animated ? !isUsingCustomTransition : false
 
-        let updateBlock = { [weak self, direction, animateUpdate, viewControllers, animated, isUsingCustomTransition] in
+        let viewControllerUpdate = { [weak self, direction, animateUpdate, viewControllers, animated, isUsingCustomTransition] in
             guard let hasSelf = self else {
                 return
             }
@@ -160,12 +155,8 @@ internal extension PageboyViewController {
         
         // Attempt to fix issue where fast scrolling causes crash.
         // See https://github.com/uias/Pageboy/issues/140
-        if async {
-            DispatchQueue.main.async {
-                updateBlock()
-            }
-        } else {
-            updateBlock()
+        DispatchQueue.main.async {
+            viewControllerUpdate()
         }
     }
 }
