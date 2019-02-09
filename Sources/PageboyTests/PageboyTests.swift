@@ -43,22 +43,4 @@ class PageboyTests: XCTestCase {
         XCTAssert(pageboyViewController != nil,
                   "PageBoyViewController initialization failed")
     }
-
-    func performAsyncTest(timeout: TimeInterval = 0.3,
-                          test: AsyncTest) {
-        let exp = expectation(description: "Async test")
-        let index = expectations.count
-        expectations.append(exp)
-        test { [unowned self] in
-            exp.fulfill()
-            self.expectations.remove(at: index)
-        }
-        waitForExpectations(timeout: timeout) { (error) in
-            guard let error = error else {
-                return
-            }
-            
-            XCTFail("Expectation failed with \(error)")
-        }
-    }
 }
